@@ -1,0 +1,26 @@
+
+* {
+    box-sizing: border-box;
+}
+
+html,body{
+    margin:0px;
+    padding:0px;
+}
+
+[wizard-origin-heads]{
+    width:100%;
+}
+[wizard-origin-heads]:after{
+    content:'';
+    display: table;
+    clear:both
+}
+[wizard-origin-head]{
+    float:left;
+}
+[wizard-origin-panel]{
+    width:100%;
+    min-height:100px;
+    display: none;
+}
