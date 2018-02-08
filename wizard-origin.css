@@ -24,3 +24,6 @@ html,body{
     min-height:100px;
     display: none;
 }
+.wizard-head-active{
+    color:red
+}

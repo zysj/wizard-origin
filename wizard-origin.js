@@ -1,27 +1,25 @@
 
 
 (function(factory,global,$){
-    
-    if(!$ || $ instanceof global.jQuery !== true)return;
+    if(!$ || $ !== global.jQuery)return;
 
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory($,global) : 
     typeof define === 'function' && define.amd ? define(['jquery'],factory) : 
-    (global.wizardOrigin = factory($,global));
-    console.log(global.wizardOrigin);
-})(function($,global){
+    (global.WizardOrigin = factory($,global));
+}(function($,global){
 
-var defults = {
+var defaults = {
     onNext:null,
     onProgress:null,
     onPrev:null,
-    headActiveClass:'',
+    headActiveClass:'wizard-head-active',
     onError:null,
     el:null
 }
 
 function WizardOrigin(option){
-    if(this instanceof wizardOrigin !== true){
-        return new wizardOrigin(option);
+    if(this instanceof WizardOrigin !== true){
+        return new WizardOrigin(option);
     }
     this.option = $.extend({},defaults,option);
     this.$el = this.option.el || $('[wizard-origin]');
@@ -33,21 +31,29 @@ function WizardOrigin(option){
     this.len = this.$heads.length;
     this.init();
 }
-console.log($);
+
 WizardOrigin.prototype = {
     init:function(){
         this.wizardChange(0,0);
         this.initButton();
     },
     wizardChange:function(index,toIndex){
-        toIndex = toIndex !=null && toIndex || index<this.len ? index+1 : index;
+        toIndex = toIndex == null && index<this.len ? index+1 : toIndex;
+        var that = this;
+        console.log(toIndex,index);
         var headActiveClass = this.option.headActiveClass;
-        if(toIndex!=index){
-            this.$panels[index].hide();
-            headActiveClass && this.$heads[index].hasClass(headActiveClass) && this.$heads[index].removeClass(headActiveClass);
+        this.$heads.each(function(i,elem){
+            var self = $(elem);
+            if(i>toIndex){
+                !!headActiveClass && self.hasClass(headActiveClass) && self.removeClass(headActiveClass);
+            }else{
+                !!headActiveClass && !self.hasClass(headActiveClass) && self.addClass(headActiveClass);
+            }
+        });
+        if(index != toIndex){
+            this.$panels[index].style.display = 'none';
         }
-        this.$panels[toIndex].show();
-        headActiveClass && !this.$heads[toIndex].hasClass(headActiveClass) && this.$heads[toIndex].addClass(headActiveClass);
+        this.$panels[toIndex].style.display = 'block';
         return;
     },
     initButton:function(){
@@ -57,7 +63,7 @@ WizardOrigin.prototype = {
         this.$next.on('click',function(e){
             var event = e || window.event;
             var next = that.move(true);
-            if(nextFn){
+            if(nextFn&&next){
                 nextFn.call(that,this,event,curIndex,that.len,next);
             }else{
                 next();
@@ -66,7 +72,7 @@ WizardOrigin.prototype = {
         this.$prev.on('click',function(e){
             var event = e || window.event;
             var prev = that.move(false);
-            if(prevFn){
+            if(prevFn&&next){
                 prevFn.call(that,this,event,curIndex,that.len,prev);
             }else{
                 prev();
@@ -85,13 +91,16 @@ WizardOrigin.prototype = {
                 return;
             };
             if(isNext){
-                toIndex = curIndex++;
-                that.wizardChange(curIndex,toIndex);
+                if(index+1>that.len-1)return false;
+                toIndex = index+1;
+                that.wizardChange(index,toIndex);
             }else{
-                toIndex = curIndex--;
-                that.wizardChange(curIndex,toIndex);
+                if(index-1<0)return false;
+                toIndex = index-1;
+                that.wizardChange(index,toIndex);
             }
             onProgress && onProgress.apply(this,index,toIndex,that.len);
+            that.curIndex = toIndex;
             return;
         }
     }
@@ -100,9 +109,10 @@ WizardOrigin.prototype = {
 $.fn.WizardOrigin = function(option){
     return this.each(function(){
         option.el = this;
-        console.log(WizardOrigin(option));
+        WizardOrigin(option);
     })
 }
+
 
 $.WizardOrigin = function(option){
     WizardOrigin(option);
@@ -110,4 +120,4 @@ $.WizardOrigin = function(option){
 
 return WizardOrigin;
 
-},window||this,window.jQuery)
+},window||this,window.jQuery))
