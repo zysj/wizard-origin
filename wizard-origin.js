@@ -34,6 +34,7 @@ function WizardOrigin(option){
 
 WizardOrigin.prototype = {
     init:function(){
+        this.$heads.width((100/this.len)+'%');
         this.wizardChange(0,0);
         this.initButton();
     },
