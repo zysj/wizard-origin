@@ -13,10 +13,11 @@ var defaults = {
     onProgress:null,    //监听执行步骤的函数
     onPrev:null,        //监听上一步按钮的函数
     onFinish:null,      //监听执行完成的函数
-    headActiveClass:'wizard-head-active',   //已执行步骤的激活类
+    headSelectedClass:'wizard-head-selected',   //已执行步骤的类
+    headActiveClass:'wizard-head-active',   //当前执行步骤的类
     onError:null,       //监听执行过程报错的函数
     el:null,                
-    isHeadClick:false   //步骤标题是否可点击
+    isHeadClick:true   //步骤标题是否可点击
 }
 
 function WizardOrigin(option){
@@ -47,12 +48,19 @@ WizardOrigin.prototype = {
         toIndex = toIndex == null && index<this.len ? index+1 : toIndex;
         var that = this;
         var headActiveClass = this.option.headActiveClass;
+        var headSelectedClass = this.option.headSelectedClass;
         this.$heads.each(function(i,elem){
             var self = $(elem);
             if(i>toIndex){
                 !!headActiveClass && self.hasClass(headActiveClass) && self.removeClass(headActiveClass);
+                !!headSelectedClass && self.hasClass(headSelectedClass) && self.removeClass(headSelectedClass);
             }else{
-                !!headActiveClass && !self.hasClass(headActiveClass) && self.addClass(headActiveClass);
+                if(i==toIndex){
+                    !!headActiveClass && !self.hasClass(headActiveClass) && self.addClass(headActiveClass);
+                }else{
+                    !!headActiveClass && self.hasClass(headActiveClass) && self.removeClass(headActiveClass);
+                }
+                !!headSelectedClass && !self.hasClass(headSelectedClass) && self.addClass(headSelectedClass);
             }
             that.$panels[i].style.display = i!=toIndex?'none':'block';
         });
@@ -86,12 +94,17 @@ WizardOrigin.prototype = {
     //初始化标题点击函数
     headClick:function(){
         var that = this;
+        var headActiveClass = this.option.headActiveClass;
         this.$heads.each(function(i){
             var self = $(this);
             self.on('click',function(){
                 if(i<=that.curIndex){
                     that.$panels[i].style.display = 'block';
                     $(that.$panels[i]).siblings('[wizard-origin-panel]').hide();
+
+                    !!headActiveClass && !self.hasClass(headActiveClass) && self.addClass(headActiveClass);
+                    $(that.$heads[i]).siblings('[wizard-origin-head].'+that.option.headSelectedClass).removeClass(headActiveClass);
+                    
                 }
             })
         });

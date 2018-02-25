@@ -48,7 +48,7 @@ html,body{
     transition: all .5s;
 }
 
-[wizard-origin-head].wizard-head-active>.progress-bar:after{
+[wizard-origin-head].wizard-head-selected>.progress-bar:after{
     width:100%;
     background-color: #0066cc;
 }
@@ -71,13 +71,15 @@ html,body{
     transition: all .5s;
     transform:scale(1,1) translateX(-50%);
     -webkit-transform:scale(1,1) translateX(-50%);
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-[wizard-origin-head].wizard-head-active>.roll-big{
+[wizard-origin-head].wizard-head-selected>.roll-big{
     transform: scale(1.3,1.3) translateX(-40%);
 }
 
-[wizard-origin-head]:hover>.roll-big{
+[wizard-origin-head]:hover>.roll-big,[wizard-origin-head].wizard-head-active>.roll-big{
     background-color: #003399;
     color:#fff;
 }
